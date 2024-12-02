@@ -1,0 +1,71 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+
+using namespace std;
+
+// Function to calculate total seek operations for FCFS
+void FCFS(const vector<int>& requests, int head) {
+    int seekCount = 0;
+    int currentPosition = head;
+
+    cout << "\nFCFS Order: ";
+    for (int request : requests) {
+        cout << request << " ";
+        seekCount += abs(request - currentPosition);
+        currentPosition = request;
+    }
+
+    cout << "\nTotal Seek Operations in FCFS: " << seekCount << endl;
+}
+
+// Function to calculate total seek operations for SSTF
+void SSTF(vector<int> requests, int head) {
+    int seekCount = 0;
+    int currentPosition = head;
+    vector<int> order;
+
+    cout << "\nSSTF Order: ";
+    while (!requests.empty()) {
+        // Find the closest request
+        auto closest = min_element(requests.begin(), requests.end(),
+            [currentPosition](int a, int b) {
+                return abs(a - currentPosition) < abs(b - currentPosition);
+            });
+
+        seekCount += abs(*closest - currentPosition);
+        currentPosition = *closest;
+        order.push_back(*closest);
+        requests.erase(closest); // Remove the processed request
+    }
+
+    for (int track : order) {
+        cout << track << " ";
+    }
+
+    cout << "\nTotal Seek Operations in SSTF: " << seekCount << endl;
+}
+
+int main() {
+    int n, head;
+
+    // Taking input from the user
+    cout << "Enter the number of disk requests: ";
+    cin >> n;
+
+    vector<int> requests(n);
+    cout << "Enter the disk requests: ";
+    for (int i = 0; i < n; ++i) {
+        cin >> requests[i];
+    }
+
+    cout << "Enter the initial position of the disk head: ";
+    cin >> head;
+
+    // Running FCFS and SSTF
+    FCFS(requests, head);
+    SSTF(requests, head);
+
+    return 0;
+}
